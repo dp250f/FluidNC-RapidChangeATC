@@ -31,8 +31,9 @@ void setup() {
     disableCore0WDT();
     try {
         timing_init();
-        uartInit();       // Setup serial port
-        Uart0.println();  // create some white space after ESP32 boot info
+        uartInit();  // Setup serial port
+
+        StartupLog::init();
 
         // Setup input polling loop after loading the configuration,
         // because the polling may depend on the config
@@ -47,7 +48,7 @@ void setup() {
         // Load settings from non-volatile storage
         settings_init();  // requires config
 
-        log_info("FluidNC " << git_info);
+        log_info("FluidNC " << git_info << " " << git_url);
         log_info("Compiled with ESP32 SDK:" << esp_get_idf_version());
 
         if (localfs_mount()) {
@@ -96,6 +97,10 @@ void setup() {
                 config->_oled->init();
             }
 
+            if (config->_stat_out) {
+                config->_stat_out->init();
+            }
+
             config->_stepping->init();  // Configure stepper interrupt timers
 
             plan_init();
@@ -133,6 +138,7 @@ void setup() {
         WebUI::wifi_config.begin();
     }
 
+    allChannels.ready();
     allChannels.deregistration(&startupLog);
     protocol_send_event(&startEvent);
 }

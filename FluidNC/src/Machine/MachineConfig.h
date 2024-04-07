@@ -22,6 +22,7 @@
 #include "../Stepper.h"
 #include "../Config.h"
 #include "../OLED.h"
+#include "../Status_outputs.h"
 #include "Axes.h"
 #include "SPIBus.h"
 #include "I2CBus.h"
@@ -46,7 +47,7 @@ namespace Machine {
         // to ensure they are not already active. If so, and hard
         // limits are enabled, Alarm state will be entered instead of
         // Idle and the user will be told to check the limits.
-        bool _checkLimits = false;
+        bool _checkLimits = true;
 
     public:
         Start() {}
@@ -79,6 +80,7 @@ namespace Machine {
         Start*                _start          = nullptr;
         Parking*              _parking        = nullptr;
         OLED*                 _oled           = nullptr;
+        Status_Outputs*       _stat_out       = nullptr;
         Spindles::SpindleList _spindles;
 
         // RapidChange ATC addition

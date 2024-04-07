@@ -13,10 +13,10 @@ void MacroEvent::run(void* arg) {
 }
 
 Macro Macros::_startup_line[n_startup_lines] = { "startup_line0", "startup_line1" };
-Macro Macros::_macro[n_macros]               = { "macro0", "macro1", "macro2", "macro3", "macro4" };
-Macro Macros::_after_homing { "after_homing" };
-Macro Macros::_after_reset { "after_reset" };
-Macro Macros::_after_unlock { "after_unlock" };
+Macro Macros::_macro[n_macros]               = { "macro0", "macro1", "macro2", "macro3" };
+Macro Macros::_after_homing                  = { "after_homing" };
+Macro Macros::_after_reset                   = { "after_reset" };
+Macro Macros::_after_unlock                  = { "after_unlock" };
 
 MacroEvent macro0Event { 0 };
 MacroEvent macro1Event { 1 };
@@ -51,15 +51,16 @@ Cmd findOverride(std::string name) {
 }
 
 bool Macro::run() {
+    if (_gcode == "") {
+        return false;
+    }
+
     if (sys.state != State::Idle) {
         log_error("Macro can only be used in idle state");
         return false;
     }
 
     const std::string& s = _gcode;
-    if (_gcode == "") {
-        return true;
-    }
 
     log_info("Running macro " << _name << ": " << _gcode);
     char c;
